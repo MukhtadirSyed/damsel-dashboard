@@ -213,9 +213,19 @@
 
     // ============ UTILS ============
     const getTheme = (score) => {
-      if (score <= 25) return { color: 'text-safe', bg: 'bg-safe', border: 'border-safe', glow: 'shadow-[0_0_15px_rgba(34,197,94,0.4)]' };
-      if (score <= 60) return { color: 'text-wobbly', bg: 'bg-wobbly', border: 'border-wobbly', glow: 'shadow-[0_0_15px_rgba(234,179,8,0.4)]' };
-      return { color: 'text-danger', bg: 'bg-danger', border: 'border-danger', glow: 'shadow-[0_0_15px_rgba(244,63,94,0.4)]' };
+      if (score <= 25) return { color: 'text-safe', bg: 'bg-safe', border: 'border-safe', glow: 'shadow-[0_0_15px_rgba(34,197,94,0.4)]', title: 'Happily Ever After ✨' };
+      if (score <= 40) return { color: 'text-safe', bg: 'bg-safe', border: 'border-safe', glow: 'shadow-[0_0_15px_rgba(34,197,94,0.4)]', title: 'Frog Kisser 🐸' }; // Using Safe green for low scores still? Or maybe a teal? Let's stick to existing colors for now or update Tailwind? I'll reuse safe/wobbly/danger mapping but update titles.
+      // Wait, 26-40 was "Minor Concerns" (yellow/wobbly) before. 
+      // Let's stick to the color mapping based on the score ranges:
+      // 0-25: Green (Safe)
+      // 26-60: Yellow (Wobbly) - this covers Frog Kisser (26-40) and Glass Slipper (41-60)
+      // 61-100: Red (Danger) - this covers Distress Signal (61-80) and Total Meltdown (81-100)
+      
+      if (score <= 25) return { color: 'text-safe', bg: 'bg-safe', border: 'border-safe', glow: 'shadow-[0_0_15px_rgba(34,197,94,0.4)]', title: 'Happily Ever After ✨' };
+      if (score <= 40) return { color: 'text-wobbly', bg: 'bg-wobbly', border: 'border-wobbly', glow: 'shadow-[0_0_15px_rgba(234,179,8,0.4)]', title: 'Frog Kisser 🐸' };
+      if (score <= 60) return { color: 'text-wobbly', bg: 'bg-wobbly', border: 'border-wobbly', glow: 'shadow-[0_0_15px_rgba(234,179,8,0.4)]', title: 'Glass Slipper Missing 👠' };
+      if (score <= 80) return { color: 'text-danger', bg: 'bg-danger', border: 'border-danger', glow: 'shadow-[0_0_15px_rgba(244,63,94,0.4)]', title: 'Distress Signal Lit 🆘' };
+      return { color: 'text-danger', bg: 'bg-danger', border: 'border-danger', glow: 'shadow-[0_0_15px_rgba(244,63,94,0.4)]', title: 'Total Meltdown 🫠' };
     };
 
     // ============ COMPONENTS ============
@@ -308,7 +318,7 @@
                   </div>
                   <div className="h-full flex flex-col justify-end p-4 text-center">
                     <h3 className="font-bold text-white truncate text-sm md:text-base">{person.name}</h3>
-                    <p className={`text-xs md:text-sm ${theme.color} font-medium truncate`}>"{person.title}"</p>
+                    <p className={`text-xs md:text-sm ${theme.color} font-medium truncate`}>"{theme.title}"</p>
                   </div>
                 </div>
               </div>
@@ -334,7 +344,7 @@
               <div className="flex flex-col md:flex-row items-center gap-3">
                 <h2 className="text-2xl font-bold text-white">{person.name}</h2>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold border ${theme.border} ${theme.color} bg-opacity-10 bg-white`}>
-                  {person.title} {person.emoji}
+                  {theme.title}
                 </span>
               </div>
               <p className="text-slate-400 italic">"{person.commentary}"</p>
