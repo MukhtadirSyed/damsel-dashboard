@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Damsel in Distress Dashboard</title>
+
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            slate: {
+              850: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
+            },
+            safe: { light: '#86efac', DEFAULT: '#22c55e', dark: '#14532d', glow: 'rgba(34, 197, 94, 0.5)' },
+            wobbly: { light: '#fde047', DEFAULT: '#eab308', dark: '#713f12', glow: 'rgba(234, 179, 8, 0.5)' },
+            danger: { light: '#fda4af', DEFAULT: '#f43f5e', dark: '#881337', glow: 'rgba(244, 63, 94, 0.5)' },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Playfair Display', 'serif'],
+          },
+          animation: {
+            'slide-up': 'slideUp 0.5s ease-out forwards',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            slideUp: {
+              'from': { opacity: '0', transform: 'translateY(20px)' },
+              'to': { opacity: '1', transform: 'translateY(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      color: #e2e8f0;
+    }
+    .font-display {
+      font-family: 'Playfair Display', serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e293b; 
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #475569; 
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b; 
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 selection:bg-rose-500 selection:text-white overflow-x-hidden">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // ============ DATA SNAPSHOT (2026-01-16) ============
+    const REPORT_DATE = "January 16, 2026";
+    const TEAM_AVERAGE = 64; // (30 + 63 + 100) / 3
+    
+    const TEAM_DATA = [
+      {
+        name: "Kriti Nigam",
+        score: 30,
+        title: "Handling It",
+        emoji: "😎",
+        commentary: "Solid velocity, but time management is slippery. Watch those deadlines!",
+        breakdown: {
+          sprintVelocity: {
+            completed: 4,
+            total: 5,
+            rate: 80,
+            score: 20
+          },
+          lawI: {
+            violations: 2,
+            penalty: 10,
+            details: [
+              "EDO-1457: Support escalation matrix (2 days late)",
+              "EDO-1456: Compile DPC costs (3 days late)"
+            ]
+          },
+          lawII: {
+            violations: 0,
+            penalty: 0,
+            details: []
+          },
+          tasks: [
+            { key: "EDO-1457", title: "Establish support-to-dev escalation matrix", status: "Done", onTime: false, source: "Sprint" },
+            { key: "EDO-1456", title: "Compile Direct Product Costs (DPC)", status: "Done", onTime: false, source: "Sprint" },
+            { key: "EDO-1381", title: "Define core metrics for domain dashboard", status: "In Progress", onTime: true, source: "Sprint" },
+            { key: "EDO-1378", title: "Research competitor offerings for Domain Privacy", status: "Done", onTime: true, source: "Sprint" },
+            { key: "EDO-1377", title: "Research competitor offerings for Domain Expiry", status: "Done", onTime: true, source: "Sprint" }
+          ]
+        }
+      },
+      {
+        name: "Khushi Parmar",
+        score: 63,
+        title: "Tower Resident",
+        emoji: "👸",
+        commentary: "Compliance queen stuck in a velocity tower. Juggling Sprint & Ops like a pro.",
+        breakdown: {
+          sprintVelocity: {
+            completed: 3, // 1 Sprint + 2 Ops Done
+            total: 8,     // 2 Sprint + 6 Ops Total
+            rate: 37.5,
+            score: 62.5 // Rounded to 63 in total
+          },
+          lawI: {
+            violations: 0,
+            penalty: 0,
+            details: [
+              "🌟 EDO-1382: Completed 1 day early!",
+              "🌟 EDO-1463: Completed 1 day early!"
+            ]
+          },
+          lawII: {
+            violations: 0,
+            penalty: 0,
+            details: []
+          },
+          tasks: [
+            { key: "EDO-1382", title: "Develop customer interview questionnaire", status: "Done", onTime: true, source: "Sprint" },
+            { key: "EDO-1383", title: "Coordination process with sales/AM", status: "In Progress", onTime: true, source: "Sprint" },
+            { key: "EDO-1463", title: "Document registry management tasks", status: "Done", onTime: true, source: "Ops" },
+            { key: "EDO-1465", title: "Fix .nz domain abuse notifications", status: "In Progress", onTime: true, source: "Ops" },
+            { key: "EDO-1453", title: "Follow up with SEDO on premium transfer", status: "Done", onTime: true, source: "Ops" },
+            { key: "EDO-1459", title: "Process for registry price hike management", status: "In Progress", onTime: true, source: "Ops" },
+            { key: "EDO-1452", title: "Onboard Knock Knock Registry (.Blog)", status: "In Progress", onTime: true, source: "Ops" },
+            { key: "EDO-1469", title: "NUP | Product Bundle", status: "Open", onTime: true, source: "Ops" }
+          ]
+        }
+      },
+      {
+        name: "Varnika Kairon",
+        score: 100,
+        title: "Full Damsel Mode",
+        emoji: "🏰",
+        commentary: "Ghost town documentation. Send knights immediately! Comments are free, use them.",
+        breakdown: {
+          sprintVelocity: {
+            completed: 0,
+            total: 4,
+            rate: 0,
+            score: 100
+          },
+          lawI: {
+            violations: 0,
+            penalty: 0,
+            details: []
+          },
+          lawII: {
+            violations: 4,
+            penalty: 20,
+            details: [
+              "EDO-1397: Missing Description (+5)",
+              "EDO-1397: In Progress with 0 comments (+5)",
+              "EDO-1396: In Progress with 0 comments (+5)",
+              "EDO-1376: In Progress with 0 comments (+5)"
+            ]
+          },
+          tasks: [
+            { key: "EDO-1397", title: "Get SWF/WF data from Analytics", status: "In Progress", onTime: true, source: "Sprint", issues: ["No Desc", "No Comments"] },
+            { key: "EDO-1396", title: "New Release Tracker Plan", status: "In Progress", onTime: true, source: "Sprint", issues: ["No Comments"] },
+            { key: "EDO-1385", title: "Gather domain forwarding usage metrics", status: "In Progress", onTime: true, source: "Sprint" },
+            { key: "EDO-1376", title: "Competitor offerings for secure web forwarding", status: "In Progress", onTime: true, source: "Sprint", issues: ["No Comments"] }
+          ]
+        }
+      }
+    ];
+
+    const SCORING_RULES = [
+      { name: "Law I: Deadlines", desc: "+5 pts per overdue or late task", icon: "⏰" },
+      { name: "Law II: Documentation", desc: "+5 pts for missing AC, desc, or updates", icon: "📜" },
+      { name: "Velocity Score", desc: "100 - Completion Rate %", icon: "🚀" }
+    ];
+
+    // ============ UTILS ============
+    const getTheme = (score) => {
+      if (score <= 25) return { color: 'text-safe', bg: 'bg-safe', border: 'border-safe', glow: 'shadow-[0_0_15px_rgba(34,197,94,0.4)]' };
+      if (score <= 60) return { color: 'text-wobbly', bg: 'bg-wobbly', border: 'border-wobbly', glow: 'shadow-[0_0_15px_rgba(234,179,8,0.4)]' };
+      return { color: 'text-danger', bg: 'bg-danger', border: 'border-danger', glow: 'shadow-[0_0_15px_rgba(244,63,94,0.4)]' };
+    };
+
+    // ============ COMPONENTS ============
+
+    const Header = () => (
+      <header className="text-center py-10 animate-slide-up">
+        <h1 className="text-5xl md:text-6xl font-display font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent mb-4 drop-shadow-lg">
+          Damsel in Distress
+        </h1>
+        <div className="flex items-center justify-center gap-3 text-slate-400 mb-2">
+          <span className="text-xl">🏰</span>
+          <span className="text-lg uppercase tracking-widest font-medium">Crisis Report</span>
+          <span className="text-xl">🏰</span>
+        </div>
+        <p className="text-slate-500 font-mono text-sm">{REPORT_DATE}</p>
+      </header>
+    );
+
+    const ScoreGauge = ({ score, size = "large" }) => {
+      const radius = size === "large" ? 60 : 35;
+      const stroke = size === "large" ? 10 : 6;
+      const normalizedRadius = radius - stroke / 2;
+      const circumference = normalizedRadius * 2 * Math.PI;
+      const strokeDashoffset = circumference - (Math.min(score, 100) / 100) * circumference;
+      const theme = getTheme(score);
+
+      return (
+        <div className="relative flex items-center justify-center">
+          <svg height={radius * 2} width={radius * 2} className="transform -rotate-90 drop-shadow-2xl">
+            <circle
+              stroke="currentColor"
+              className="text-slate-800"
+              strokeWidth={stroke}
+              fill="transparent"
+              r={normalizedRadius}
+              cx={radius}
+              cy={radius}
+            />
+            <circle
+              stroke="currentColor"
+              className={`${theme.color} transition-all duration-1000 ease-out`}
+              strokeWidth={stroke}
+              strokeDasharray={circumference + ' ' + circumference}
+              style={{ strokeDashoffset }}
+              strokeLinecap="round"
+              fill="transparent"
+              r={normalizedRadius}
+              cx={radius}
+              cy={radius}
+            />
+          </svg>
+          <div className="absolute flex flex-col items-center">
+            <span className={`font-bold ${size === "large" ? "text-4xl" : "text-xl"} ${theme.color} drop-shadow-md`}>
+              {score}
+            </span>
+            {size === "large" && <span className="text-xs text-slate-500 font-mono">DISTRESS</span>}
+          </div>
+        </div>
+      );
+    };
+
+    const Podium = () => {
+      const sorted = [...TEAM_DATA].sort((a, b) => a.score - b.score);
+      // Reorder for podium: 2nd, 1st, 3rd
+      const podiumOrder = [sorted[1], sorted[0], sorted[2]];
+      
+      return (
+        <div className="flex justify-center items-end gap-4 md:gap-8 mb-16 px-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          {podiumOrder.map((person, idx) => {
+            const rank = person === sorted[0] ? 1 : person === sorted[1] ? 2 : 3;
+            const height = rank === 1 ? 'h-64' : rank === 2 ? 'h-48' : 'h-32';
+            const theme = getTheme(person.score);
+            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+            
+            return (
+              <div key={person.name} className="flex flex-col items-center w-1/3 md:w-48 group">
+                <div className="mb-4 text-center transform transition-transform group-hover:-translate-y-2 duration-300">
+                  <div className="text-5xl md:text-6xl mb-2 filter drop-shadow-lg animate-float" style={{ animationDelay: `${idx}s` }}>
+                    {person.emoji}
+                  </div>
+                  <ScoreGauge score={person.score} size="small" />
+                </div>
+                
+                <div className={`w-full ${height} ${theme.bg} bg-opacity-10 border-t-4 ${theme.border} rounded-t-xl relative backdrop-blur-sm transition-all duration-500 hover:bg-opacity-20`}>
+                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 text-3xl">
+                    {medal}
+                  </div>
+                  <div className="h-full flex flex-col justify-end p-4 text-center">
+                    <h3 className="font-bold text-white truncate text-sm md:text-base">{person.name}</h3>
+                    <p className={`text-xs md:text-sm ${theme.color} font-medium truncate`}>"{person.title}"</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
+
+    const ScoreCard = ({ person }) => {
+      const theme = getTheme(person.score);
+      const [isOpen, setIsOpen] = useState(false);
+
+      return (
+        <div className={`bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden mb-6 hover:border-slate-700 transition-colors duration-300 animate-slide-up ${theme.glow}`}>
+          {/* Card Header */}
+          <div className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
+            <div className="flex-shrink-0">
+              <ScoreGauge score={person.score} />
+            </div>
+            
+            <div className="flex-grow text-center md:text-left space-y-2">
+              <div className="flex flex-col md:flex-row items-center gap-3">
+                <h2 className="text-2xl font-bold text-white">{person.name}</h2>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${theme.border} ${theme.color} bg-opacity-10 bg-white`}>
+                  {person.title} {person.emoji}
+                </span>
+              </div>
+              <p className="text-slate-400 italic">"{person.commentary}"</p>
+              
+              {/* Quick Stats Grid */}
+              <div className="grid grid-cols-3 gap-2 mt-4 max-w-md mx-auto md:mx-0">
+                <div className="bg-slate-800/50 p-2 rounded text-center">
+                  <div className="text-xs text-slate-500">Velocity</div>
+                  <div className="font-mono font-bold text-white">{person.breakdown.sprintVelocity.score}</div>
+                </div>
+                <div className="bg-slate-800/50 p-2 rounded text-center">
+                  <div className="text-xs text-slate-500">Law I</div>
+                  <div className={`font-mono font-bold ${person.breakdown.lawI.penalty > 0 ? 'text-danger-light' : 'text-safe-light'}`}>
+                    +{person.breakdown.lawI.penalty}
+                  </div>
+                </div>
+                <div className="bg-slate-800/50 p-2 rounded text-center">
+                  <div className="text-xs text-slate-500">Law II</div>
+                  <div className={`font-mono font-bold ${person.breakdown.lawII.penalty > 0 ? 'text-danger-light' : 'text-safe-light'}`}>
+                    +{person.breakdown.lawII.penalty}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setIsOpen(!isOpen)}
+              className="mt-4 md:mt-0 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors flex items-center gap-2"
+            >
+              {isOpen ? 'Hide Details' : 'View Audit'}
+              <span className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+            </button>
+          </div>
+
+          {/* Expanded Details */}
+          {isOpen && (
+            <div className="border-t border-slate-800 bg-slate-800/20 p-6 space-y-6">
+              
+              {/* Violations Section */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <span>⏰</span> Law I: Deadlines
+                  </h3>
+                  {person.breakdown.lawI.details.length > 0 ? (
+                    <ul className="space-y-2">
+                      {person.breakdown.lawI.details.map((detail, i) => (
+                        <li key={i} className={`text-sm p-2 rounded ${detail.toLowerCase().includes('early') ? 'bg-safe-dark/20 text-safe-light border border-safe-dark/50' : 'bg-danger-dark/20 text-danger-light border border-danger-dark/50'}`}>
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="p-3 bg-safe-dark/10 border border-safe-dark/30 rounded text-safe-light text-sm italic">
+                      ✨ No deadline violations detected.
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <span>📜</span> Law II: Documentation
+                  </h3>
+                  {person.breakdown.lawII.details.length > 0 ? (
+                    <ul className="space-y-2">
+                      {person.breakdown.lawII.details.map((detail, i) => (
+                        <li key={i} className="text-sm bg-danger-dark/20 text-danger-light border border-danger-dark/50 p-2 rounded">
+                          ⚠️ {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="p-3 bg-safe-dark/10 border border-safe-dark/30 rounded text-safe-light text-sm italic">
+                      ✨ Documentation standards met.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Task List */}
+              <div>
+                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <span>📋</span> Active Tasks ({person.breakdown.tasks.length})
+                </h3>
+                <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-800">
+                  <div className="max-h-60 overflow-y-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-slate-800 text-slate-400 sticky top-0">
+                        <tr>
+                          <th className="p-3 font-medium">Key</th>
+                          <th className="p-3 font-medium">Summary</th>
+                          <th className="p-3 font-medium">Source</th>
+                          <th className="p-3 font-medium text-right">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-800">
+                        {person.breakdown.tasks.map((task) => (
+                          <tr key={task.key} className="hover:bg-slate-800/50 transition-colors">
+                            <td className="p-3 font-mono text-slate-500 text-xs">{task.key}</td>
+                            <td className="p-3 text-slate-300">
+                              <div className="truncate max-w-[200px] md:max-w-md" title={task.title}>{task.title}</div>
+                              {task.issues && (
+                                <div className="flex gap-1 mt-1">
+                                  {task.issues.map(issue => (
+                                    <span key={issue} className="text-[10px] bg-danger-dark/30 text-danger-light px-1.5 py-0.5 rounded border border-danger-dark/50">
+                                      {issue}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-3">
+                              <span className={`text-xs px-2 py-0.5 rounded ${task.source === 'Ops' ? 'bg-indigo-900/50 text-indigo-300' : 'bg-slate-800 text-slate-400'}`}>
+                                {task.source}
+                              </span>
+                            </td>
+                            <td className="p-3 text-right">
+                              <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
+                                task.status === 'Done' ? 'bg-safe-dark/30 text-safe-light' : 
+                                task.status === 'In Progress' ? 'bg-wobbly-dark/30 text-wobbly-light' : 
+                                'bg-slate-700 text-slate-300'
+                              }`}>
+                                {task.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const Footer = () => {
+      const [tip, setTip] = useState("");
+      
+      useEffect(() => {
+        const tips = [
+          "Tip: Comments are cheaper than rescue missions.",
+          "Tip: A task without a due date is just a dream.",
+          "Tip: 'In Progress' for 7 days is suspicious.",
+          "Tip: Velocity matters, but compliance saves lives.",
+          "Tip: Always bribe the dragon with documentation."
+        ];
+        setTip(tips[Math.floor(Math.random() * tips.length)]);
+      }, []);
+
+      return (
+        <footer className="text-center py-8 border-t border-slate-800 mt-12">
+          <p className="text-slate-500 mb-2">{tip}</p>
+          <p className="text-slate-600 text-xs">Generated by the Damsel in Distress Scoring System v1.0</p>
+        </footer>
+      );
+    };
+
+    const App = () => {
+      return (
+        <div className="container mx-auto px-4 max-w-5xl">
+          <Header />
+          <Podium />
+          
+          <div className="mb-12">
+            <h2 className="text-xl font-bold text-white mb-6 pl-2 border-l-4 border-purple-500">Individual Scorecards</h2>
+            {TEAM_DATA.map(person => (
+              <ScoreCard key={person.name} person={person} />
+            ))}
+          </div>
+
+          <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 mb-8">
+            <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+              <span>⚖️</span> The Laws of the Realm
+            </h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              {SCORING_RULES.map(rule => (
+                <div key={rule.name} className="bg-slate-950 p-4 rounded-lg border border-slate-800 hover:border-slate-700 transition-colors">
+                  <div className="text-2xl mb-2">{rule.icon}</div>
+                  <div className="font-bold text-slate-200 text-sm mb-1">{rule.name}</div>
+                  <div className="text-slate-500 text-xs">{rule.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Footer />
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
