@@ -3,186 +3,577 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Damsel in Distress - Sprint Reviews</title>
-  
+  <title>Damsel in Distress Dashboard | Enchanted Realm</title>
+
+  <!-- Tailwind CSS Play CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            parchment: {
+              50: '#fdfbf7',
+              100: '#f7f3e8',
+              200: '#efe5cd',
+              300: '#e5d0a6',
+              400: '#d9b678',
+              500: '#cc9952',
+              600: '#b07b3f',
+              700: '#8c5e35',
+              800: '#724c31',
+              900: '#5e3f2b',
+            },
+            royal: {
+              light: '#c4b5fd',
+              DEFAULT: '#8b5cf6',
+              dark: '#5b21b6',
+            },
+            safe: { light: '#dcfce7', DEFAULT: '#22c55e', dark: '#15803d', text: '#14532d' },
+            wobbly: { light: '#fef9c3', DEFAULT: '#eab308', dark: '#a16207', text: '#713f12' },
+            danger: { light: '#ffe4e6', DEFAULT: '#f43f5e', dark: '#be123c', text: '#881337' },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Cinzel', 'Playfair Display', 'serif'],
+            hand: ['Dancing Script', 'cursive'],
+          },
+          backgroundImage: {
+            'castle-pattern': "url('https://www.transparenttextures.com/patterns/paper-fibers.png')",
+          },
+          animation: {
+            'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'float': 'float 6s ease-in-out infinite',
+            'shine': 'shine 2s infinite',
+          },
+          keyframes: {
+            slideUp: {
+              'from': { opacity: '0', transform: 'translateY(20px)' },
+              'to': { opacity: '1', transform: 'translateY(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            shine: {
+              '0%': { transform: 'translateX(-100%)' },
+              '100%': { transform: 'translateX(100%)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Dancing+Script:wght@700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom, #020617, #0f172a, #020617);
-      color: #e2e8f0;
+      background-color: #fdfbf7;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d9b678' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
-    .font-display {
-      font-family: 'Playfair Display', serif;
+    .text-shadow {
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .text-shadow-lg {
+      text-shadow: 0 4px 8px rgba(0,0,0,0.12);
     }
-    .animate-fadeIn {
-      animation: fadeIn 0.6s ease-out forwards;
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-8">
-  <div class="max-w-4xl w-full animate-fadeIn">
-    <!-- Header -->
-    <header className="text-center mb-16">
-      <h1 class="text-6xl md:text-7xl font-display font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent mb-6 drop-shadow-2xl">
-        Damsel in Distress
-      </h1>
-      <div class="flex items-center justify-center gap-4 text-slate-400 mb-4">
-        <span class="text-2xl">🏰</span>
-        <p class="text-2xl font-display italic">Sprint Review Archive</p>
-        <span class="text-2xl">🏰</span>
-      </div>
-      <p class="text-slate-500 text-sm max-w-2xl mx-auto">
-        A chronicle of deadline accountability, documentation quality, and velocity metrics for the APAC Domains Team.
-      </p>
-    </header>
+<body class="min-h-screen text-slate-800 overflow-x-hidden">
+  <div id="root"></div>
 
-    <!-- Sprint List -->
-    <div class="bg-slate-900/50 backdrop-blur rounded-2xl border border-slate-800 p-8 shadow-2xl mb-12">
-      <h2 class="text-2xl font-bold text-white mb-6 border-b border-slate-800 pb-4">
-        📅 Sprint Reviews
-      </h2>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // ============ DATA SNAPSHOT (2026-01-17) ============
+    const REPORT_DATE = "January 17, 2026";
+    
+    // Updated with Live Audit Scores
+    const TEAM_DATA = [
+      {
+        name: "Kriti Nigam",
+        score: 30,
+        title: "Handling It",
+        emoji: "🛡️",
+        rank: 1,
+        commentary: "The kingdom's finest. A few late scrolls delivered, but the archives are pristine.",
+        breakdown: {
+          sprintVelocity: { score: 20 }, // 80% completion
+          lawI: {
+            penalty: 10,
+            details: [
+              "EDO-1457: Support escalation matrix (Late)",
+              "EDO-1456: Compile DPC costs (Late)"
+            ]
+          },
+          lawII: {
+            penalty: 0,
+            details: []
+          },
+          tasks: [
+            { key: "EDO-1457", title: "Establish support-to-dev escalation matrix", status: "Done", onTime: false, source: "Sprint" },
+            { key: "EDO-1456", title: "Compile Direct Product Costs (DPC)", status: "Done", onTime: false, source: "Sprint" },
+            { key: "EDO-1381", title: "Define core metrics for domain dashboard", status: "In Progress", onTime: true, source: "Sprint" },
+            { key: "EDO-1378", title: "Research competitor offerings for Domain Privacy", status: "Done", onTime: true, source: "Sprint" },
+            { key: "EDO-1377", title: "Research competitor offerings for Domain Expiry", status: "Done", onTime: true, source: "Sprint" }
+          ]
+        }
+      },
+      {
+        name: "Khushi Parmar",
+        score: 67,
+        title: "Tower Resident",
+        emoji: "👸",
+        rank: 2,
+        commentary: "Two magical early deliveries, but the tower is getting crowded with 8 active quests.",
+        breakdown: {
+          sprintVelocity: { score: 62 }, // 37.5% completion
+          lawI: {
+            penalty: 0,
+            details: [
+              "🌟 EDO-1382: Completed 1 day early!",
+              "🌟 EDO-1463: Completed 1 day early!",
+              "⚠️ EDO-1383: Currently Overdue",
+              "⚠️ EDO-1465: Currently Overdue"
+            ]
+          },
+          lawII: {
+            penalty: 5,
+            details: ["EDO-1383: Stale task (5+ days)"]
+          },
+          tasks: [
+            { key: "EDO-1382", title: "Customer interview guide", status: "Done", onTime: true, source: "Sprint", issues: ["Early!"] },
+            { key: "EDO-1463", title: "Registry management tasks", status: "Done", onTime: true, source: "Ops", issues: ["Early!"] },
+            { key: "EDO-1453", title: "SEDO premium transfer", status: "Done", onTime: true, source: "Ops" },
+            { key: "EDO-1383", title: "Sales coordination process", status: "In Progress", onTime: false, source: "Sprint", issues: ["Stale", "Overdue"] },
+            { key: "EDO-1465", title: "Fix .nz domain abuse routing", status: "In Progress", onTime: false, source: "Ops", issues: ["Overdue"] },
+            { key: "EDO-1452", title: "Onboard Knock Knock Registry", status: "In Progress", onTime: true, source: "Ops" },
+            { key: "EDO-1459", title: "Registry price hike process", status: "In Progress", onTime: true, source: "Ops" },
+            { key: "EDO-1469", title: "NUP | Product Bundle", status: "Open", onTime: true, source: "Ops" }
+          ]
+        }
+      },
+      {
+        name: "Varnika Kairon",
+        score: 100,
+        title: "Dragon Bait",
+        emoji: "🐉",
+        rank: 3,
+        commentary: "The dragon is breathing fire. Zero velocity and scrolls are missing descriptions!",
+        breakdown: {
+          sprintVelocity: { score: 100 }, // 0% completion
+          lawI: {
+            penalty: 0,
+            details: []
+          },
+          lawII: {
+            penalty: 20,
+            details: [
+              "EDO-1397: Missing Description (+5)",
+              "EDO-1397: In Progress w/ 0 comments (+5)",
+              "EDO-1396: In Progress w/ 0 comments (+5)",
+              "EDO-1376: In Progress w/ 0 comments (+5)"
+            ]
+          },
+          tasks: [
+            { key: "EDO-1397", title: "Get SWF/WF data from Analytics", status: "In Progress", onTime: true, source: "Sprint", issues: ["No Desc", "No Comments"] },
+            { key: "EDO-1396", title: "New Release Tracker Plan", status: "In Progress", onTime: true, source: "Sprint", issues: ["No Comments"] },
+            { key: "EDO-1385", title: "Gather domain forwarding metrics", status: "In Progress", onTime: true, source: "Sprint" },
+            { key: "EDO-1376", title: "Competitor offerings for SWF", status: "In Progress", onTime: true, source: "Sprint", issues: ["No Comments"] }
+          ]
+        }
+      }
+    ];
+
+    const SCORING_RULES = [
+      { name: "Law I: Deadlines", desc: "+5 pts per overdue or late task", icon: "⏰" },
+      { name: "Law II: Documentation", desc: "+5 pts for missing AC, desc, or updates", icon: "📜" },
+      { name: "Velocity Score", desc: "100 - Completion Rate %", icon: "🚀" }
+    ];
+
+    // ============ UTILS ============
+    const getTheme = (score) => {
+      if (score <= 30) return { 
+        text: 'text-safe-text', 
+        bg: 'bg-safe', 
+        bgLight: 'bg-safe-light',
+        border: 'border-safe', 
+        gradient: 'from-emerald-400 to-green-500',
+        icon: '🛡️' 
+      };
+      if (score <= 67) return { 
+        text: 'text-wobbly-text', 
+        bg: 'bg-wobbly', 
+        bgLight: 'bg-wobbly-light',
+        border: 'border-wobbly', 
+        gradient: 'from-amber-400 to-orange-500',
+        icon: '👑' 
+      };
+      return { 
+        text: 'text-danger-text', 
+        bg: 'bg-danger', 
+        bgLight: 'bg-danger-light',
+        border: 'border-danger', 
+        gradient: 'from-rose-400 to-red-600',
+        icon: '🔥' 
+      };
+    };
+
+    // ============ COMPONENTS ============
+
+    const Header = () => (
+      <header className="text-center py-12 animate-slide-up relative">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+           {/* Decorative elements could go here */}
+        </div>
+        
+        <div className="relative z-10">
+          <div className="inline-block mb-3 px-4 py-1 rounded-full bg-parchment-200 border border-parchment-400 text-parchment-800 text-xs font-bold tracking-widest uppercase">
+            Official Royal Decree
+          </div>
+          <h1 className="text-5xl md:text-7xl font-display font-black text-parchment-900 mb-4 text-shadow-lg leading-tight">
+            Damsel in <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600">Distress</span>
+          </h1>
+          <div className="flex items-center justify-center gap-4 text-parchment-600 mb-2">
+            <span className="h-px w-12 bg-parchment-400"></span>
+            <span className="font-hand text-2xl text-parchment-800 font-bold">Crisis Report</span>
+            <span className="h-px w-12 bg-parchment-400"></span>
+          </div>
+          <p className="text-parchment-500 font-display italic text-sm mt-2">{REPORT_DATE}</p>
+        </div>
+      </header>
+    );
+
+    const ScoreGauge = ({ score, size = "large" }) => {
+      const radius = size === "large" ? 60 : 36;
+      const stroke = size === "large" ? 10 : 6;
+      const normalizedRadius = radius - stroke / 2;
+      const circumference = normalizedRadius * 2 * Math.PI;
+      const strokeDashoffset = circumference - (Math.min(score, 100) / 100) * circumference;
+      const theme = getTheme(score);
+
+      return (
+        <div className="relative flex items-center justify-center">
+          {/* Decorative Ring */}
+          <div className={`absolute rounded-full opacity-20 ${size === "large" ? "w-32 h-32" : "w-20 h-20"} bg-gradient-to-br ${theme.gradient} blur-xl`}></div>
+          
+          <svg height={radius * 2} width={radius * 2} className="transform -rotate-90 relative z-10 drop-shadow-md">
+            <circle
+              stroke="currentColor"
+              className="text-parchment-200"
+              strokeWidth={stroke}
+              fill="transparent"
+              r={normalizedRadius}
+              cx={radius}
+              cy={radius}
+            />
+            <circle
+              stroke="currentColor"
+              className={`${theme.text} transition-all duration-1000 ease-out`}
+              strokeWidth={stroke}
+              strokeDasharray={circumference + ' ' + circumference}
+              style={{ strokeDashoffset }}
+              strokeLinecap="round"
+              fill="transparent"
+              r={normalizedRadius}
+              cx={radius}
+              cy={radius}
+            />
+          </svg>
+          <div className="absolute flex flex-col items-center z-20">
+            <span className={`font-display font-bold ${size === "large" ? "text-4xl" : "text-xl"} ${theme.text}`}>
+              {score}
+            </span>
+            {size === "large" && <span className="text-[10px] uppercase tracking-wider text-parchment-500 font-bold">Distress</span>}
+          </div>
+        </div>
+      );
+    };
+
+    const Podium = () => {
+      const sorted = [...TEAM_DATA].sort((a, b) => a.score - b.score);
+      const podiumOrder = [sorted[1], sorted[0], sorted[2]]; // 2nd, 1st, 3rd
       
-      <div class="space-y-4">
-        <!-- Sprint 1 -->
-        <a href="./sprint-1/" class="block group">
-          <div class="bg-slate-800/50 hover:bg-slate-800 transition-all duration-300 rounded-xl p-6 border border-slate-700 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/20">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-              <div class="flex-grow">
-                <h3 class="text-xl font-bold text-white group-hover:text-purple-400 transition-colors mb-2">
-                  Sprint 1 Review
-                </h3>
-                <p class="text-slate-400 text-sm mb-3">January 16, 2026</p>
-                <div class="flex flex-wrap gap-3 text-xs">
-                  <span class="px-3 py-1 bg-slate-900 border border-slate-700 rounded-full text-slate-300">
-                    Team Average: 64 pts
-                  </span>
-                  <span class="px-3 py-1 bg-green-900/30 border border-green-700 rounded-full text-green-300">
-                    Kriti: 30 pts
-                  </span>
-                  <span class="px-3 py-1 bg-yellow-900/30 border border-yellow-700 rounded-full text-yellow-300">
-                    Khushi: 63 pts
-                  </span>
-                  <span class="px-3 py-1 bg-red-900/30 border border-red-700 rounded-full text-red-300">
-                    Varnika: 100 pts
-                  </span>
+      return (
+        <div className="flex justify-center items-end gap-4 md:gap-8 mb-20 px-4 pt-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          {podiumOrder.map((person, idx) => {
+            const rank = person.rank;
+            const height = rank === 1 ? 'h-72' : rank === 2 ? 'h-56' : 'h-40';
+            const theme = getTheme(person.score);
+            const medal = rank === 1 ? '👑' : rank === 2 ? '🥈' : '🥉';
+            const delay = rank === 1 ? '0.2s' : rank === 2 ? '0.3s' : '0.4s';
+            
+            return (
+              <div key={person.name} className="flex flex-col items-center w-1/3 md:w-56 group relative">
+                {/* Floating Avatar */}
+                <div className="mb-6 text-center transform transition-transform group-hover:-translate-y-2 duration-500">
+                  <div className="text-6xl md:text-7xl mb-3 filter drop-shadow-xl animate-float" style={{ animationDelay: `${idx}s` }}>
+                    {person.emoji}
+                  </div>
+                  <div className="bg-white/80 backdrop-blur-sm px-4 py-1 rounded-full shadow-sm border border-parchment-200 inline-block">
+                    <ScoreGauge score={person.score} size="small" />
+                  </div>
+                </div>
+                
+                {/* Podium Block */}
+                <div 
+                  className={`w-full ${height} bg-gradient-to-b from-white to-parchment-100 border-x border-t border-white rounded-t-2xl relative shadow-lg transition-all duration-500 group-hover:shadow-xl flex flex-col justify-end p-4 text-center overflow-hidden`}
+                >
+                  {/* Rank Badge */}
+                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-md border-2 border-parchment-100 text-2xl z-10">
+                    {medal}
+                  </div>
+                  
+                  {/* Decorative Gradient Overlay */}
+                  <div className={`absolute inset-0 bg-gradient-to-t ${theme.gradient} opacity-5`}></div>
+                  
+                  <h3 className="font-display font-bold text-slate-800 text-lg md:text-xl relative z-10 mb-1">{person.name}</h3>
+                  <p className={`text-xs md:text-sm ${theme.text} font-bold tracking-wide uppercase relative z-10`}>{person.title}</p>
                 </div>
               </div>
-              <div class="flex items-center gap-3 text-4xl">
-                <span>😎</span>
-                <span>👸</span>
-                <span>🏰</span>
-                <span class="text-slate-600 group-hover:text-purple-400 transition-colors">→</span>
+            );
+          })}
+        </div>
+      );
+    };
+
+    const ScoreCard = ({ person }) => {
+      const theme = getTheme(person.score);
+      const [isOpen, setIsOpen] = useState(false);
+
+      return (
+        <div className="group bg-white rounded-2xl shadow-sm border border-parchment-200 overflow-hidden mb-6 hover:shadow-md transition-all duration-300 animate-slide-up">
+          {/* Card Header */}
+          <div className="p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+            {/* Background Decoration */}
+            <div className={`absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl ${theme.gradient} opacity-5 rounded-bl-full -mr-16 -mt-16 pointer-events-none`}></div>
+            
+            <div className="flex-shrink-0 relative z-10">
+              <ScoreGauge score={person.score} />
+            </div>
+            
+            <div className="flex-grow text-center md:text-left space-y-3 relative z-10">
+              <div className="flex flex-col md:flex-row items-center gap-3">
+                <h2 className="text-3xl font-display font-bold text-slate-900">{person.name}</h2>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${theme.border} ${theme.text} ${theme.bgLight}`}>
+                  {person.title} {person.emoji}
+                </span>
+              </div>
+              <p className="text-slate-500 italic font-serif text-lg">"{person.commentary}"</p>
+              
+              {/* Quick Stats Grid */}
+              <div className="grid grid-cols-3 gap-4 mt-4 max-w-md mx-auto md:mx-0">
+                <div className="bg-parchment-50 p-2 rounded-lg border border-parchment-100 text-center">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Velocity</div>
+                  <div className="font-display font-bold text-xl text-slate-700">{person.breakdown.sprintVelocity.score}</div>
+                </div>
+                <div className="bg-parchment-50 p-2 rounded-lg border border-parchment-100 text-center">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Law I</div>
+                  <div className={`font-display font-bold text-xl ${person.breakdown.lawI.penalty > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                    +{person.breakdown.lawI.penalty}
+                  </div>
+                </div>
+                <div className="bg-parchment-50 p-2 rounded-lg border border-parchment-100 text-center">
+                  <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-1">Law II</div>
+                  <div className={`font-display font-bold text-xl ${person.breakdown.lawII.penalty > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                    +{person.breakdown.lawII.penalty}
+                  </div>
+                </div>
               </div>
             </div>
+
+            <button 
+              onClick={() => setIsOpen(!isOpen)}
+              className="mt-4 md:mt-0 px-6 py-2 bg-parchment-100 hover:bg-parchment-200 rounded-full text-sm font-bold text-slate-600 transition-colors flex items-center gap-2 z-10"
+            >
+              {isOpen ? 'Close Scroll' : 'Inspect Scroll'}
+              <span className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+            </button>
           </div>
-        </a>
 
-        <!-- Placeholder for future sprints -->
-        <div class="bg-slate-800/20 border-2 border-dashed border-slate-700 rounded-xl p-6 text-center">
-          <p class="text-slate-500 italic">Future sprint reviews will appear here...</p>
+          {/* Expanded Details */}
+          {isOpen && (
+            <div className="border-t border-parchment-200 bg-parchment-50 p-6 md:p-8 space-y-8 animate-slide-up">
+              
+              {/* Violations Section */}
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 border-b border-parchment-200 pb-2">
+                    <span className="text-lg">⏰</span> Law I: Deadlines
+                  </h3>
+                  {person.breakdown.lawI.details.length > 0 ? (
+                    <ul className="space-y-2">
+                      {person.breakdown.lawI.details.map((detail, i) => (
+                        <li key={i} className={`text-sm p-3 rounded-md font-medium flex items-start gap-2 ${detail.toLowerCase().includes('early') || detail.toLowerCase().includes('bonus') ? 'bg-safe-light text-safe-text border border-safe/20' : 'bg-danger-light text-danger-text border border-danger/20'}`}>
+                          <span>{detail.toLowerCase().includes('early') ? '⭐' : '⚠️'}</span>
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-md text-emerald-700 text-sm italic flex gap-2">
+                      <span>✨</span> No deadline violations. The sands of time are respected.
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 border-b border-parchment-200 pb-2">
+                    <span className="text-lg">📜</span> Law II: Documentation
+                  </h3>
+                  {person.breakdown.lawII.details.length > 0 ? (
+                    <ul className="space-y-2">
+                      {person.breakdown.lawII.details.map((detail, i) => (
+                        <li key={i} className="text-sm bg-danger-light text-danger-text border border-danger/20 p-3 rounded-md font-medium flex items-start gap-2">
+                          <span>⚠️</span> {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-md text-emerald-700 text-sm italic flex gap-2">
+                      <span>✨</span> Documentation is flawless. The scribes are pleased.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Task List */}
+              <div>
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-parchment-200 pb-2">
+                  <span className="text-lg">⚔️</span> Active Quests ({person.breakdown.tasks.length})
+                </h3>
+                <div className="bg-white rounded-xl shadow-sm border border-parchment-200 overflow-hidden">
+                  <div className="max-h-80 overflow-y-auto custom-scrollbar">
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-parchment-50 text-slate-500 sticky top-0 z-10 border-b border-parchment-200">
+                        <tr>
+                          <th className="p-4 font-bold">Key</th>
+                          <th className="p-4 font-bold">Summary</th>
+                          <th className="p-4 font-bold">Realm</th>
+                          <th className="p-4 font-bold text-right">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-parchment-100">
+                        {person.breakdown.tasks.map((task) => (
+                          <tr key={task.key} className="hover:bg-parchment-50/50 transition-colors">
+                            <td className="p-4 font-mono text-slate-500 text-xs font-medium">{task.key}</td>
+                            <td className="p-4 text-slate-700">
+                              <div className="font-medium" title={task.title}>{task.title}</div>
+                              {task.issues && (
+                                <div className="flex flex-wrap gap-1 mt-1.5">
+                                  {task.issues.map(issue => (
+                                    <span key={issue} className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${issue.includes('Early') ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-rose-100 text-rose-700 border-rose-200'}`}>
+                                      {issue}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-4">
+                              <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded border ${task.source === 'Ops' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                                {task.source}
+                              </span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${
+                                task.status === 'Done' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 
+                                task.status === 'In Progress' ? 'bg-amber-100 text-amber-700 border-amber-200' : 
+                                'bg-slate-100 text-slate-600 border-slate-200'
+                              }`}>
+                                {task.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
         </div>
-      </div>
-    </div>
+      );
+    };
 
-    <!-- Scoring Rules Section -->
-    <div class="bg-slate-900/80 backdrop-blur rounded-2xl border border-slate-800 p-8 shadow-2xl">
-      <h2 class="text-2xl font-bold text-white mb-6 border-b border-slate-800 pb-4 flex items-center gap-2">
-        <span>📜</span> The Royal Decree: Scoring Laws
-      </h2>
+    const Footer = () => {
+      const [tip, setTip] = useState("");
       
-      <div class="grid md:grid-cols-3 gap-6 text-sm">
-        <!-- Law I -->
-        <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
-          <div class="text-3xl mb-3">⏰</div>
-          <h3 class="text-lg font-bold text-red-400 mb-2">Law I: Deadlines</h3>
-          <p class="text-slate-400 mb-3">Thou shalt be accountable for thy deadlines.</p>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="text-red-500 font-bold">+5 pts</span>
-              <span>Task completed late</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="text-red-500 font-bold">+5 pts</span>
-              <span>Task currently overdue</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="text-green-500 font-bold">-5 pts</span>
-              <span>Task completed early (Bonus!)</span>
-            </li>
-          </ul>
-        </div>
+      useEffect(() => {
+        const tips = [
+          "Tip: Comments are cheaper than rescue missions.",
+          "Tip: A task without a due date is just a dream.",
+          "Tip: 'In Progress' for 7 days summons the dragons.",
+          "Tip: Velocity matters, but compliance saves the kingdom.",
+          "Tip: Always bribe the dragon with documentation."
+        ];
+        setTip(tips[Math.floor(Math.random() * tips.length)]);
+      }, []);
 
-        <!-- Law II -->
-        <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
-          <div class="text-3xl mb-3">📝</div>
-          <h3 class="text-lg font-bold text-red-400 mb-2">Law II: Documentation</h3>
-          <p class="text-slate-400 mb-3">Jira shall be the source of truth.</p>
-          <ul class="space-y-2 text-slate-300">
-            <li class="flex items-start gap-2">
-              <span class="text-red-500 font-bold">+5 pts</span>
-              <span>Missing/Short Description</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="text-red-500 font-bold">+5 pts</span>
-              <span>No comments on 'In Progress'</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="text-red-500 font-bold">+5 pts</span>
-              <span>Stale task (>7 days no update)</span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Velocity -->
-        <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
-          <div class="text-3xl mb-3">🚀</div>
-          <h3 class="text-lg font-bold text-blue-400 mb-2">Velocity Score</h3>
-          <p class="text-slate-400 mb-3">Completion rate defines your base score.</p>
-          <div class="bg-slate-900 p-3 rounded font-mono text-xs mb-3 text-center border border-slate-800">
-            Score = 100 - (Completion %)
-          </div>
-          <p class="text-slate-400 text-xs">
-            Example: If you complete 8 out of 10 tasks (80%), your base score is 20. <br/><br/>
-            Lower score is better! 0 is perfect.
+      return (
+        <footer className="text-center py-12 mt-12 border-t border-parchment-200">
+          <p className="text-slate-600 font-display italic text-lg mb-2">"{tip}"</p>
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">
+            Generated by the Damsel in Distress Scoring System v1.1
           </p>
-        </div>
-      </div>
+        </footer>
+      );
+    };
 
-      <!-- Distress Levels -->
-      <div class="mt-8 pt-6 border-t border-slate-800">
-        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Distress Levels</h3>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-xs font-bold">
-          <div class="p-2 bg-green-500/20 text-green-400 rounded border border-green-500/30">
-            0-25 pts<br/>Happily Ever After ✨
+    const App = () => {
+      return (
+        <div className="container mx-auto px-4 max-w-5xl pt-8">
+          <Header />
+          <Podium />
+          
+          <div className="mb-12">
+            <h2 className="text-2xl font-display font-bold text-slate-800 mb-8 flex items-center gap-3">
+              <span className="w-8 h-1 bg-gradient-to-r from-rose-500 to-purple-600 rounded-full"></span>
+              Individual Scorecards
+            </h2>
+            {TEAM_DATA.map(person => (
+              <ScoreCard key={person.name} person={person} />
+            ))}
           </div>
-          <div class="p-2 bg-teal-500/20 text-teal-400 rounded border border-teal-500/30">
-            26-40 pts<br/>Frog Kisser 🐸
-          </div>
-          <div class="p-2 bg-yellow-500/20 text-yellow-400 rounded border border-yellow-500/30">
-            41-60 pts<br/>Glass Slipper Missing 👠
-          </div>
-          <div class="p-2 bg-orange-500/20 text-orange-400 rounded border border-orange-500/30">
-            61-80 pts<br/>Distress Signal Lit 🆘
-          </div>
-          <div class="p-2 bg-red-500/20 text-red-400 rounded border border-red-500/30">
-            81-100 pts<br/>Total Meltdown 🫠
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Footer -->
-    <footer class="text-center mt-12 text-slate-600 text-sm">
-      <p>🏰 May your distress scores be ever low 🏰</p>
-      <p class="mt-2">Powered by the Damsel in Distress Scoring System</p>
-    </footer>
-  </div>
+          <div className="bg-white rounded-2xl border border-parchment-200 p-8 shadow-sm mb-12">
+            <h3 className="text-xl font-display font-bold text-slate-900 mb-6 flex items-center gap-2 border-b border-parchment-100 pb-4">
+              <span>⚖️</span> The Laws of the Realm
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {SCORING_RULES.map(rule => (
+                <div key={rule.name} className="bg-parchment-50 p-6 rounded-xl border border-parchment-100 hover:border-parchment-300 transition-colors group">
+                  <div className="text-4xl mb-3 transform group-hover:scale-110 transition-transform duration-300">{rule.icon}</div>
+                  <div className="font-bold text-slate-900 text-lg mb-2 font-display">{rule.name}</div>
+                  <div className="text-slate-500 text-sm leading-relaxed">{rule.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Footer />
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
